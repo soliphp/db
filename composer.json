@@ -1,0 +1,28 @@
+{
+    "name": "soliphp/db",
+    "description": "Soli Database",
+    "type": "library",
+    "keywords": ["db", "database", "model", "soliphp"],
+    "homepage": "https://github.com/soliphp/db",
+    "support": {
+        "issues": "https://github.com/soliphp/db/issues",
+        "source": "https://github.com/soliphp/db"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ueaner",
+            "email": "ueaner@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "soliphp/di": "^1.0",
+        "soliphp/helpers": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Soli\\": "src/"
+        }
+    }
+}
