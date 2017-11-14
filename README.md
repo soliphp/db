@@ -21,10 +21,10 @@ Soli Db 提供了一个简单、易用的数据库工具包。
    * [保存数据 save](#保存数据-save)
    * [删除数据 delete](#删除数据-delete)
    * [查询数据](#查询数据)
-      * [find / findFirst](#find-findfirst)
+      * [find 和 findFirst](#find-和-findfirst)
       * [findById](#findbyid)
       * [findByIds](#findbyids)
-      * [findByColumn / findFirstByColumn](#findbycolumn-findfirstbycolumn)
+      * [findByColumn 和 findFirstByColumn](#findbycolumn-和-findfirstbycolumn)
    * [三个重要的 protected 方法](#三个重要的-protected-方法)
 * [MIT License](#mit-license)
 
@@ -256,7 +256,7 @@ Soli Db 采用 `dsn` 的方式配置连接信息，例如下面的格式：
 
 ### 查询数据
 
-#### find / findFirst
+#### find 和 findFirst
 
 `find` 和 `findFirst` 同时适用于以下方式：
 
@@ -294,7 +294,7 @@ Soli Db 采用 `dsn` 的方式配置连接信息，例如下面的格式：
     // 获取用户ID为 123 和 456 的用户信息
     User::findByIds([123, 456]);
 
-#### findByColumn / findFirstByColumn
+#### findBy*Column* 和 findFirstBy*Column*
 
 findBy*Column* / findFirstBy*Column* 通过某一个字段获取数据。
 
