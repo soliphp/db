@@ -39,7 +39,7 @@ abstract class Model implements ContainerAwareInterface
             $this->initialize();
         }
 
-        $container->setShared(get_called_class(), $this);
+        $container->set(get_called_class(), $this);
         // 虽然尽量避免使用 new，而是使用 instance() 方法取
         // 但也保证两者拿到的结构是一样的
         $this->container = $container;
@@ -52,7 +52,7 @@ abstract class Model implements ContainerAwareInterface
      */
     public static function instance()
     {
-        return Container::instance()->getShared(get_called_class());
+        return Container::instance()->get(get_called_class());
     }
 
     /**
@@ -128,12 +128,12 @@ abstract class Model implements ContainerAwareInterface
         $container = $this->container;
 
         if ($name == 'db') {
-            $this->db = $container->getShared($this->connectionService());
+            $this->db = $container->get($this->connectionService());
             return $this->db;
         }
 
         if ($container->has($name)) {
-            $this->$name = $container->getShared($name);
+            $this->$name = $container->get($name);
             // 将找到的服务添加到属性, 以便下次直接调用
             return $this->$name;
         }
