@@ -84,10 +84,10 @@ trait Query
 
         $binds = [];
         foreach ($fields as $field => $value) {
-            $binds[':'.$field] = $value;
+            $binds[":$field"] = $value;
         }
 
-        $fields = implode(',', array_keys($fields));
+        $fields     = implode(',', array_keys($fields));
         $fieldBinds = implode(',', array_keys($binds));
 
         $sql = "INSERT INTO {$model->tableName()}($fields) VALUES($fieldBinds)";
@@ -367,14 +367,14 @@ trait Query
 
         $binds = [];
         foreach ($ids as $id) {
-            $binds[':id'.$id] = $id;
+            $binds[":id_{$id}"] = $id;
         }
 
         $fieldBinds = implode(',', array_keys($binds));
         $number = count($ids);
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE {$model->primaryKey()} IN ($fieldBinds)"
-             . " LIMIT {$number}";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE {$model->primaryKey()} IN ($fieldBinds)"
+            . " LIMIT {$number}";
 
         $data = $model->query($sql, $binds);
         if (empty($data)) {
@@ -424,7 +424,7 @@ trait Query
             $column = uncamelize($column);
 
             if (!in_array($column, $columns)) {
-                throw new Exception("Call to undefined method $name");
+                throw new Exception("Call to undefined method '$name'");
             }
         }
 
@@ -437,7 +437,7 @@ trait Query
      * 通过某个字段获取多条记录
      *
      * @param string $column 字段名
-     * @param string $value  字段值
+     * @param string $value 字段值
      * @param string $fields
      * @return array|false
      */
@@ -449,7 +449,7 @@ trait Query
         $fields = $model->normalizeFields($fields);
 
         $binds = [];
-        $binds[':' . $column] = $value;
+        $binds[":$column"] = $value;
 
         $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column = :$column";
 
@@ -460,7 +460,7 @@ trait Query
      * 通过某个字段获取一条记录
      *
      * @param string $column 字段名
-     * @param string $value  字段值
+     * @param string $value 字段值
      * @param string $fields
      * @return array|false
      */
@@ -472,7 +472,7 @@ trait Query
         $fields = $model->normalizeFields($fields);
 
         $binds = [];
-        $binds[':' . $column] = $value;
+        $binds[":$column"] = $value;
 
         $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column = :$column";
 
@@ -484,8 +484,8 @@ trait Query
      *
      * @param string $column1 字段名1
      * @param string $column2 字段名2
-     * @param string $value1  字段值1
-     * @param string $value2  字段值2
+     * @param string $value1 字段值1
+     * @param string $value2 字段值2
      * @param string $fields
      * @return array|false
      */
@@ -497,8 +497,8 @@ trait Query
         $fields = $model->normalizeFields($fields);
 
         $binds = [];
-        $binds[':' . $column1] = $value1;
-        $binds[':' . $column2] = $value2;
+        $binds[":$column1"] = $value1;
+        $binds[":$column2"] = $value2;
 
         $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column1 = :$column1 AND $column2 = :$column2";
 
@@ -510,8 +510,8 @@ trait Query
      *
      * @param string $column1 字段名1
      * @param string $column2 字段名2
-     * @param string $value1  字段值1
-     * @param string $value2  字段值2
+     * @param string $value1 字段值1
+     * @param string $value2 字段值2
      * @param string $fields
      * @return array|false
      */
@@ -523,8 +523,8 @@ trait Query
         $fields = $model->normalizeFields($fields);
 
         $binds = [];
-        $binds[':' . $column1] = $value1;
-        $binds[':' . $column2] = $value2;
+        $binds[":$column1"] = $value1;
+        $binds[":$column2"] = $value2;
 
         $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column1 = :$column1 AND $column2 = :$column2";
 
@@ -573,7 +573,7 @@ trait Query
      */
     protected function emptyPage($totalItems = 0, $currentPage = 1, $pageSize = 20)
     {
-        $totalPages = (int) ceil($totalItems / $pageSize);
+        $totalPages = (int)ceil($totalItems / $pageSize);
         $current    = $currentPage < $totalPages ? $currentPage : $totalPages;
         $before     = $currentPage - 1 > 0 ? $currentPage - 1 : 0;
         $next       = $currentPage + 1 > $totalPages ? $totalPages : $currentPage + 1;

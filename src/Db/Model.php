@@ -48,7 +48,7 @@ abstract class Model implements ContainerAwareInterface
     /**
      * 获取 Model 对象实例
      *
-     * @return $this
+     * @return static
      */
     public static function instance()
     {

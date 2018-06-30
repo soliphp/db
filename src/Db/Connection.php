@@ -49,10 +49,10 @@ class Connection
      * Connection constructor.
      *
      * @param array|\ArrayAccess $config {
-     *   @var string dsn
-     *   @var string username
-     *   @var string password
-     *   @var array  options
+     *     @var string $dsn
+     *     @var string $username
+     *     @var string $password
+     *     @var array  $options
      * }
      */
     public function __construct($config)
