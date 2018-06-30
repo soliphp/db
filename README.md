@@ -15,7 +15,7 @@ Soli Db 提供了一个简单、易用的数据库工具包。
    * [定义模型](#定义模型)
    * [指定数据库连接服务](#指定数据库连接服务)
    * [指定表名](#指定表名)
-   * [initialize 方法](#initialize-方法)
+   * [指定主键](#指定主键)
    * [instance 方法](#instance-方法)
    * [新增数据 create](#新增数据-create)
    * [编辑数据 update](#编辑数据-update)
@@ -147,47 +147,41 @@ Soli Db 采用 `dsn` 的方式配置连接信息，例如下面的格式：
 
 ### 指定数据库连接服务
 
+通过 protected $connection 属性来设置：
+
     /**
-     * 当前模型访问的数据库连接服务
+     * 当前模型访问的数据库连接服务名称
      */
-    public function connectionService()
-    {
-        return 'user_db';
-    }
+    protected $connection = 'user_db';
 
 此时我们使用 User 模型时，访问的是容器中以 `user_db` 命名的数据库连接服务（也就是上面 `//User_db` 行，所设置的服务）。
 
 ### 指定表名
 
+通过 protected $table 属性来设置：
+
     /**
      * 当前模型操作的表名
      */
-    public function tableName()
-    {
-        return 'xxx_user';
-    }
+    protected $table = 'xxx_user';
 
 此时我们使用 User 模型时，操作的表名为 `xxx_user`。
 
-### initialize 方法
+### 指定主键
 
-`initialize()` 方法在实例化模型时执行，对于以上指定数据库连接服务、指定表名等操作，也可以在 `initialize` 方法中设置。
+通过 protected $primaryKey 属性来设置，默认主键为 `id`：
 
-    public function initialize()
-        // 当前模型访问的数据库连接服务
-        $this->connectionService = 'db_service_name';
-        // 当前模型操作的表名
-        $this->tableName = 'xxx_user';
-
-        // 其他想要执行的需求...
-    }
+    /**
+     * 当前模型所操作表的主键
+     */
+    protected $primaryKey = 'xxx_id';
 
 ### instance 方法
 
 模型提供了 `instance()` 方法，供外部程序获取模型实例，如：
 
     // 获取表名
-    User::instance()->tableName();
+    User::instance()->table();
 
     // 通过 email 获取用户信息
     User::instance()->findByEmail('ueaner@gmail.com');

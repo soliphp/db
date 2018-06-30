@@ -14,19 +14,19 @@ use Exception;
  */
 trait Query
 {
-    protected $tableName;
-    protected $primaryKey;
+    protected $table;
+    protected $primaryKey = 'id';
     protected $columns;
 
     /**
      * 获取表名称
      */
-    public function tableName()
+    public function table()
     {
-        if ($this->tableName === null) {
-            $this->tableName = uncamelize(str_replace("\\", '', get_called_class()));
+        if ($this->table === null) {
+            $this->table = uncamelize(basename(str_replace('\\', '/', get_called_class())));
         }
-        return $this->tableName;
+        return $this->table;
     }
 
     /**
@@ -35,7 +35,7 @@ trait Query
     public function columns()
     {
         if ($this->columns === null) {
-            $sql = 'DESCRIBE ' . $this->tableName();
+            $sql = 'DESCRIBE ' . $this->table();
             $this->columns = $this->query($sql);
         }
 
@@ -47,15 +47,6 @@ trait Query
      */
     public function primaryKey()
     {
-        if ($this->primaryKey === null) {
-            foreach ($this->columns() as $column) {
-                if ($column['Key'] == 'PRI') {
-                    $this->primaryKey = $column['Field'];
-                    break;
-                }
-            }
-        }
-
         return $this->primaryKey;
     }
 
@@ -90,7 +81,7 @@ trait Query
         $fields     = implode(',', array_keys($fields));
         $fieldBinds = implode(',', array_keys($binds));
 
-        $sql = "INSERT INTO {$model->tableName()}($fields) VALUES($fieldBinds)";
+        $sql = "INSERT INTO {$model->table()}($fields) VALUES($fieldBinds)";
 
         return $model->query($sql, $binds);
     }
@@ -125,7 +116,7 @@ trait Query
             $params = $model->primaryKey() . ' = ' . $params;
         }
 
-        $sql = "DELETE FROM {$model->tableName()} WHERE $params";
+        $sql = "DELETE FROM {$model->table()} WHERE $params";
 
         return $model->query($sql, $binds);
     }
@@ -177,7 +168,7 @@ trait Query
         }
 
         $sets = implode(',', $sets);
-        $sql = "UPDATE {$model->tableName()} SET $sets WHERE $params";
+        $sql = "UPDATE {$model->table()} SET $sets WHERE $params";
 
         return $model->query($sql, $binds);
     }
@@ -265,7 +256,7 @@ trait Query
             $params = " WHERE $params ";
         }
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} $params";
+        $sql = "SELECT {$fields} FROM {$model->table()} $params";
 
         $data = $model->query($sql, $binds);
 
@@ -317,7 +308,7 @@ trait Query
             $params = " WHERE $params ";
         }
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} $params";
+        $sql = "SELECT {$fields} FROM {$model->table()} $params";
 
         return $model->queryRow($sql, $binds);
     }
@@ -340,7 +331,7 @@ trait Query
 
         $fields = $model->normalizeFields($fields);
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE {$model->primaryKey()} = :id";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE {$model->primaryKey()} = :id";
         $binds = [':id' => $id];
 
         return $model->queryRow($sql, $binds);
@@ -451,7 +442,7 @@ trait Query
         $binds = [];
         $binds[":$column"] = $value;
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column = :$column";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE $column = :$column";
 
         return $model->queryAll($sql, $binds);
     }
@@ -474,7 +465,7 @@ trait Query
         $binds = [];
         $binds[":$column"] = $value;
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column = :$column";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE $column = :$column";
 
         return $model->queryRow($sql, $binds);
     }
@@ -500,7 +491,7 @@ trait Query
         $binds[":$column1"] = $value1;
         $binds[":$column2"] = $value2;
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column1 = :$column1 AND $column2 = :$column2";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE $column1 = :$column1 AND $column2 = :$column2";
 
         return $model->queryAll($sql, $binds);
     }
@@ -526,7 +517,7 @@ trait Query
         $binds[":$column1"] = $value1;
         $binds[":$column2"] = $value2;
 
-        $sql = "SELECT {$fields} FROM {$model->tableName()} WHERE $column1 = :$column1 AND $column2 = :$column2";
+        $sql = "SELECT {$fields} FROM {$model->table()} WHERE $column1 = :$column1 AND $column2 = :$column2";
 
         return $model->queryRow($sql, $binds);
     }

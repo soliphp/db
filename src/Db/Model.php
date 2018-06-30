@@ -5,45 +5,18 @@
 namespace Soli\Db;
 
 use Soli\Di\Container;
-use Soli\Di\ContainerInterface;
-use Soli\Di\ContainerAwareInterface;
-use Soli\Di\ContainerAwareTrait;
 
 /**
  * 模型
  *
  * @property \Soli\Db\Connection $db
- * @property \Soli\Di\ContainerInterface $container
  */
-abstract class Model implements ContainerAwareInterface
+abstract class Model
 {
-    use ContainerAwareTrait;
     use Query;
 
-    /** @var string $connectionService */
-    protected $connectionService;
-
-    /**
-     * Model constructor.
-     *
-     * @param \Soli\Di\ContainerInterface|null $container
-     */
-    final public function __construct(ContainerInterface $container = null)
-    {
-        if (!is_object($container)) {
-            $container = Container::instance();
-        }
-
-        if (method_exists($this, 'initialize')) {
-            // 初始化方法可以设置：connectionService，tableName，primaryKey
-            $this->initialize();
-        }
-
-        $container->set(get_called_class(), $this);
-        // 虽然尽量避免使用 new，而是使用 instance() 方法取
-        // 但也保证两者拿到的结构是一样的
-        $this->container = $container;
-    }
+    /** @var string $connection */
+    protected $connection = 'db';
 
     /**
      * 获取 Model 对象实例
@@ -60,9 +33,9 @@ abstract class Model implements ContainerAwareInterface
      *
      * @return string
      */
-    public function connectionService()
+    public function connection()
     {
-        return $this->connectionService ? $this->connectionService : 'db';
+        return $this->connection;
     }
 
     /**
@@ -125,10 +98,10 @@ abstract class Model implements ContainerAwareInterface
      */
     public function __get($name)
     {
-        $container = $this->container;
+        $container = Container::instance();
 
         if ($name == 'db') {
-            $this->db = $container->get($this->connectionService());
+            $this->db = $container->get($this->connection());
             return $this->db;
         }
 
