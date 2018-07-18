@@ -98,6 +98,52 @@ class Connection
     }
 
     /**
+     * 获取 PDO 实例
+     *
+     * @return \PDO
+     */
+    public function getPdo()
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * 查询 SQL 语句返回结果的所有行
+     *
+     * @param string $sql SQL语句
+     * @param array $binds 绑定条件
+     * @return array
+     */
+    public function queryAll($sql, $binds = [])
+    {
+        return $this->query($sql, $binds, 'all');
+    }
+
+    /**
+     * 查询 SQL 语句返回结果的第一行
+     *
+     * @param string $sql SQL语句
+     * @param array $binds 绑定条件
+     * @return array
+     */
+    public function queryRow($sql, $binds = [])
+    {
+        return $this->query($sql, $binds, 'row');
+    }
+
+    /**
+     * 查询 SQL 语句中第一个字段的值
+     *
+     * @param string $sql SQL语句
+     * @param array $binds 绑定条件
+     * @return int|string
+     */
+    public function queryColumn($sql, $binds = [])
+    {
+        return $this->query($sql, $binds, 'column');
+    }
+
+    /**
      * 执行一条 SQL 语句
      *
      * @param string $sql SQL语句
@@ -154,30 +200,6 @@ class Connection
     }
 
     /**
-     * 确定异常是否由连接丢失引起的
-     *
-     * @param \Exception $e
-     * @return bool
-     */
-    protected function causedByLostConnection(Exception $e)
-    {
-        return contains($e->getMessage(), [
-            'server has gone away',
-            'no connection to the server',
-            'Lost connection',
-            'is dead or not enabled',
-            'Error while sending',
-            'decryption failed or bad record mac',
-            'server closed the connection unexpectedly',
-            'SSL connection has been closed unexpectedly',
-            'Error writing data to the connection',
-            'Resource deadlock avoided',
-            'Transaction() on null',
-            'child connection forced to terminate due to client_idle_limit',
-        ]);
-    }
-
-    /**
      * 返回最后插入行的 ID 或序列值，数据库需要将主键设置为自增
      *
      * @return int
@@ -205,8 +227,7 @@ class Connection
      */
     protected function fetchMode($fetchMode)
     {
-        $fetchMode = strtoupper($fetchMode);
-        switch ($fetchMode) {
+        switch (strtoupper($fetchMode)) {
             case 'ROW':
                 // 获取一行数据
                 return $this->stmt->fetch();
@@ -219,6 +240,30 @@ class Connection
                 // 获取完整的查询结果
                 return $this->stmt->fetchAll();
         }
+    }
+
+    /**
+     * 确定异常是否由连接丢失引起的
+     *
+     * @param \Exception $e
+     * @return bool
+     */
+    protected function causedByLostConnection(Exception $e)
+    {
+        return contains($e->getMessage(), [
+            'server has gone away',
+            'no connection to the server',
+            'Lost connection',
+            'is dead or not enabled',
+            'Error while sending',
+            'decryption failed or bad record mac',
+            'server closed the connection unexpectedly',
+            'SSL connection has been closed unexpectedly',
+            'Error writing data to the connection',
+            'Resource deadlock avoided',
+            'Transaction() on null',
+            'child connection forced to terminate due to client_idle_limit',
+        ]);
     }
 
     // 事务

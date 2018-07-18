@@ -8,6 +8,7 @@ Soli Db 提供了一个简单、易用的数据库工具包。
 * [安装](#安装)
 * [配置信息](#配置信息)
 * [使用 Connection](#使用-connection)
+   * [Connection 四个重要的方法](#connection-四个重要的方法)
    * [自动重连](#自动重连)
 * [使用事务](#使用事务)
 * [配置多数据库连接](#配置多数据库连接)
@@ -26,7 +27,6 @@ Soli Db 提供了一个简单、易用的数据库工具包。
       * [findById](#findbyid)
       * [findByIds](#findbyids)
       * [findByColumn 和 findFirstByColumn](#findbycolumn-和-findfirstbycolumn)
-   * [三个重要的 protected 方法](#三个重要的-protected-方法)
 * [MIT License](#mit-license)
 
 ## 安装
@@ -66,6 +66,28 @@ Soli Db 采用 `dsn` 的方式配置连接信息，例如下面的格式：
     $result = $db->query("SELECT * FROM test");
 
     var_dump($result);
+
+### Connection 四个重要的方法
+
+Connection 的核心方法 `query()` 作用为执行一条 SQL 语句:
+
+    query($sql, $binds = [], $fetchMode = 'column|row|all')
+
+首先 `query()` 方法允许参数绑定，其次可以通过不同的 $fetchMode
+返回相应的数据结果（如：返回所有行、一行或一个字段），
+另外 `query()` 方法执行不同类型的 SQL 时，会自动返回对应类型的执行结果：
+
+    INSERT  返回插入数据的主键ID
+    DELETE  返回影响行数
+    UPDATE  返回影响行数
+    SELECT  根据 column|row|all 返回对应的数据结果
+
+基于查询数据时，对返回数据结果的要求不同，Connection 直接提供了对应 column|row|all
+三个参数值的三个方法，便于我们直接使用：
+
+    queryAll($sql, $binds = [])     获取多条数据
+    queryRow($sql, $binds = [])     获取一条数据
+    queryColumn($sql, $binds = [])  获取一个字段
 
 ### 自动重连
 
@@ -188,7 +210,7 @@ Soli Db 采用 `dsn` 的方式配置连接信息，例如下面的格式：
 
 ### 新增数据 create
 
-新增数据，返回插入的主键值。
+新增数据，返回插入的主键值，需要将主键设置为自增。
 
     $data = [
         'name' => 'ueaner',
@@ -309,18 +331,6 @@ findBy*Column* / findFirstBy*Column* 通过某一个字段获取数据。
 
     // 通过 create_at 字段获取用户信息
     User::findByCreatedAt('2015-10-27 07:16:16');
-
-### 三个重要的 protected 方法
-
-模型中提供了三个方法用来执行原生 SQL 语句：
-
-    queryAll($sql, $binds = [])     获取多条数据
-    queryRow($sql, $binds = [])     获取一条数据
-    queryColumn($sql, $binds = [])  获取一个字段
-
-上面所有的 create、update、find* 等方法最终都是通过这三个方法执行的原生 SQL 语句。
-
-我们在写自己的模型方法时也可以调用这三个方法获取 SQL 执行的结果。
 
 ## MIT License
 
